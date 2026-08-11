@@ -1,4 +1,4 @@
-package br.com.f2e.starkbankwebhook.invoice.domain;
+package br.com.f2e.starkbankwebhook.invoice.domain.validation;
 
 import java.math.BigDecimal;
 
@@ -37,7 +37,6 @@ public final class Preconditions {
 
     return value;
   }
-
 
   private static BigDecimal toBigDecimal(Number value, String fieldName) {
     try {
