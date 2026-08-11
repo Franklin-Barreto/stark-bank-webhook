@@ -1,0 +1,10 @@
+.idea/
+.vscode/
+.DS_Store
+
+target/
+
+.env
+*.pem
+
+.docx-review/
