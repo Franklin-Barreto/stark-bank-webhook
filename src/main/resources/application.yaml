@@ -24,3 +24,11 @@ management:
     health:
       probes:
         enabled: true
+
+starkbank:
+  enabled: ${STARKBANK_ENABLED:false}
+  environment: ${STARKBANK_ENVIRONMENT:sandbox}
+  project-id: ${STARKBANK_PROJECT_ID:}
+  private-key: ${STARKBANK_PRIVATE_KEY:}
+  invoice:
+    run-on-startup: ${STARKBANK_INVOICE_RUN_ON_STARTUP:false}
