@@ -1,7 +1,7 @@
 package br.com.f2e.starkbankwebhook.invoice.domain;
 
-import static br.com.f2e.starkbankwebhook.invoice.domain.validation.Preconditions.requireNotBlank;
-import static br.com.f2e.starkbankwebhook.invoice.domain.validation.Preconditions.requirePositive;
+import static br.com.f2e.starkbankwebhook.shared.domain.validation.Preconditions.requireNotBlank;
+import static br.com.f2e.starkbankwebhook.shared.domain.validation.Preconditions.requirePositive;
 
 public record InvoiceDraft(long amount, String payerName, String payerTaxId) {
 

@@ -1,4 +1,4 @@
-package br.com.f2e.starkbankwebhook.invoice.domain.validation;
+package br.com.f2e.starkbankwebhook.shared.domain.validation;
 
 import java.math.BigDecimal;
 
@@ -33,6 +33,16 @@ public final class Preconditions {
 
     if (numericValue.signum() <= 0) {
       throw new IllegalArgumentException(GREATER_THAN_ZERO.formatted(fieldName));
+    }
+
+    return value;
+  }
+
+  public static <T extends Number> T requireNonNegative(T value, String fieldName) {
+    requireNotNull(value, fieldName);
+
+    if (toBigDecimal(value, fieldName).signum() < 0) {
+      throw new IllegalArgumentException("%s must not be negative".formatted(fieldName));
     }
 
     return value;

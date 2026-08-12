@@ -3,8 +3,8 @@ package br.com.f2e.starkbankwebhook.invoice.infrastructure.starkbank;
 import br.com.f2e.starkbankwebhook.invoice.application.InvoiceBatchGenerator;
 import br.com.f2e.starkbankwebhook.invoice.application.InvoiceIssuer;
 import br.com.f2e.starkbankwebhook.invoice.application.IssueInvoiceBatch;
+import br.com.f2e.starkbankwebhook.shared.infrastructure.starkbank.ConditionalOnStarkBankEnabled;
 import com.starkbank.Project;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @EnableScheduling
 @EnableConfigurationProperties(StarkBankProperties.class)
-@ConditionalOnProperty(prefix = "starkbank", name = "enabled", havingValue = "true")
+@ConditionalOnStarkBankEnabled
 class StarkBankConfiguration {
 
   @Bean
