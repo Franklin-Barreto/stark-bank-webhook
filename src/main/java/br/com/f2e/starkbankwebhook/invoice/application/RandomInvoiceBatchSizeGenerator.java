@@ -1,4 +1,4 @@
-package br.com.f2e.starkbankwebhook.invoice.domain;
+package br.com.f2e.starkbankwebhook.invoice.application;
 
 import java.util.Objects;
 import java.util.random.RandomGenerator;

@@ -1,4 +1,4 @@
-package br.com.f2e.starkbankwebhook.invoice.domain;
+package br.com.f2e.starkbankwebhook.invoice.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
