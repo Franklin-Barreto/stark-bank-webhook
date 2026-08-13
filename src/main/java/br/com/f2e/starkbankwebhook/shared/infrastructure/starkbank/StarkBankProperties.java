@@ -1,4 +1,4 @@
-package br.com.f2e.starkbankwebhook.invoice.infrastructure.starkbank;
+package br.com.f2e.starkbankwebhook.shared.infrastructure.starkbank;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
