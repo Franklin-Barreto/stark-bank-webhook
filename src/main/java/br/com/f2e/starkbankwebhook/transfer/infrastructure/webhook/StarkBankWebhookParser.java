@@ -3,6 +3,7 @@ package br.com.f2e.starkbankwebhook.transfer.infrastructure.webhook;
 import br.com.f2e.starkbankwebhook.transfer.domain.CreditedInvoice;
 import com.starkbank.Event;
 import com.starkbank.Project;
+import java.util.Objects;
 import java.util.Optional;
 
 public class StarkBankWebhookParser {
@@ -10,7 +11,7 @@ public class StarkBankWebhookParser {
   private final Project project;
 
   public StarkBankWebhookParser(Project project) {
-    this.project = project;
+    this.project = Objects.requireNonNull(project);
   }
 
   public Optional<CreditedInvoice> parse(String payload, String signature) {
