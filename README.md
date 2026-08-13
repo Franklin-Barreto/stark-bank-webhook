@@ -33,6 +33,8 @@ transfer
 └── infrastructure
 
 shared
+├── domain
+│   └── validation
 └── infrastructure
 ~~~
 
@@ -47,9 +49,10 @@ Scheduler
 invoice.credited
   → valida a assinatura do webhook
   → calcula amount - fee
-  → verifica se a Invoice já foi processada
+  → tenta reservar atomicamente o processamento
+  → ignora se a Invoice já estiver reservada ou processada
   → cria a Transfer
-  → registra a Invoice como processada
+  → mantém o registro no sucesso ou libera a reserva na falha
 ~~~
 
 Uma conciliação opcional consulta eventos `invoice.credited` ainda não
@@ -188,8 +191,9 @@ mvn verify
 ~~~
 
 Os testes de persistência executam Liquibase e JPA contra PostgreSQL 17
-descartável via Testcontainers. O `verify` também aplica a formatação e verifica
-a cobertura mínima de 70% configurada no JaCoCo.
+descartável via Testcontainers. O `verify` também verifica a formatação e a
+cobertura mínima de 70% configurada no JaCoCo. Classes de configuração, inicialização e agendamento são
+excluídas da métrica por não conterem lógica própria.
 
 ## Deploy manual na AWS
 

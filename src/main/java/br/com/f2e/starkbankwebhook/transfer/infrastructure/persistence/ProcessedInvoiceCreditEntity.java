@@ -18,9 +18,4 @@ class ProcessedInvoiceCreditEntity {
   private Instant processedAt;
 
   protected ProcessedInvoiceCreditEntity() {}
-
-  ProcessedInvoiceCreditEntity(String invoiceId, Instant processedAt) {
-    this.invoiceId = invoiceId;
-    this.processedAt = processedAt;
-  }
 }
