@@ -5,6 +5,7 @@ import br.com.f2e.starkbankwebhook.invoice.application.InvoiceIssuer;
 import br.com.f2e.starkbankwebhook.invoice.application.IssueInvoiceBatch;
 import br.com.f2e.starkbankwebhook.shared.infrastructure.starkbank.ConditionalOnStarkBankEnabled;
 import com.starkbank.Project;
+import com.starkcore.Settings;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +20,11 @@ class StarkBankConfiguration {
   @Bean
   Project starkBankProject(StarkBankProperties properties) {
     try {
-      return new Project(properties.environment(), properties.projectId(), properties.privateKey());
+      var project =
+          new Project(properties.environment(), properties.projectId(), properties.privateKey());
+
+      Settings.user = project;
+      return project;
     } catch (Exception exception) {
       throw new IllegalStateException("Failed to configure Stark Bank project", exception);
     }
