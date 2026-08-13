@@ -2,7 +2,6 @@ package br.com.f2e.starkbankwebhook.transfer.application;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,32 +29,30 @@ class ProcessCreditedInvoiceTest {
   }
 
   @Test
-  void shouldIssueTransferAndMarkInvoiceCreditAsProcessed() {
+  void shouldIssueTransferWhenInvoiceCreditClaimSucceeds() {
     var creditedInvoice = new CreditedInvoice("invoice-id", 10_000, 500);
+    when(processedInvoiceCreditStore.tryClaim(creditedInvoice.invoiceId())).thenReturn(true);
 
     processCreditedInvoice.execute(creditedInvoice);
 
-    var order = inOrder(transferIssuer, processedInvoiceCreditStore);
-
-    order.verify(transferIssuer).issue(new TransferRequest("invoice-id", 9_500));
-    order.verify(processedInvoiceCreditStore).markAsProcessed(creditedInvoice.invoiceId());
+    verify(transferIssuer).issue(new TransferRequest("invoice-id", 9_500));
+    verify(processedInvoiceCreditStore, never()).releaseClaim(creditedInvoice.invoiceId());
   }
 
   @Test
-  void shouldIgnoreAlreadyProcessedInvoiceCredit() {
+  void shouldIgnoreAlreadyClaimedInvoiceCredit() {
 
     var creditedInvoice = new CreditedInvoice("invoice-id", 10_000, 500);
 
-    when(processedInvoiceCreditStore.wasProcessed(creditedInvoice.invoiceId()))
-        .thenReturn(Boolean.TRUE);
+    when(processedInvoiceCreditStore.tryClaim(creditedInvoice.invoiceId())).thenReturn(false);
     processCreditedInvoice.execute(creditedInvoice);
 
     verify(transferIssuer, never()).issue(new TransferRequest("invoice-id", 9_500));
-    verify(processedInvoiceCreditStore, never()).markAsProcessed(creditedInvoice.invoiceId());
+    verify(processedInvoiceCreditStore, never()).releaseClaim(creditedInvoice.invoiceId());
   }
 
   @Test
-  void shouldNotMarkInvoiceCreditAsProcessedWhenTransferFails() {
+  void shouldReleaseInvoiceCreditClaimWhenTransferFails() {
     var creditedInvoice = new CreditedInvoice("invoice-id", 10_000, 500);
 
     var transferRequest = new TransferRequest("invoice-id", 9_500);
@@ -63,11 +60,12 @@ class ProcessCreditedInvoiceTest {
     var exception =
         new TransferIssuanceException("Failed to issue transfer", new RuntimeException());
 
+    when(processedInvoiceCreditStore.tryClaim(creditedInvoice.invoiceId())).thenReturn(true);
     doThrow(exception).when(transferIssuer).issue(transferRequest);
 
     assertThatThrownBy(() -> processCreditedInvoice.execute(creditedInvoice))
         .isInstanceOf(TransferIssuanceException.class);
 
-    verify(processedInvoiceCreditStore, never()).markAsProcessed(creditedInvoice.invoiceId());
+    verify(processedInvoiceCreditStore).releaseClaim(creditedInvoice.invoiceId());
   }
 }

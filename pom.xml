@@ -184,8 +184,9 @@
                 <configuration>
                     <excludes>
                         <exclude>**/*Application.class</exclude>
-                        <exclude>**/Preconditions.class</exclude>
-                        <exclude>**/InvoiceCreditReconciliationRunner.class</exclude>
+                        <exclude>**/*Configuration.class</exclude>
+                        <exclude>**/*Runner.class</exclude>
+                        <exclude>**/*Scheduler.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>

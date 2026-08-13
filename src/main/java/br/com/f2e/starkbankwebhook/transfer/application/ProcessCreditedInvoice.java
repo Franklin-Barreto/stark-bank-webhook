@@ -20,14 +20,18 @@ public final class ProcessCreditedInvoice {
   }
 
   public void execute(CreditedInvoice invoice) {
-    if (processedInvoiceCreditStore.wasProcessed(invoice.invoiceId())) {
-      LOGGER.info("Invoice credit already processed: invoiceId={}", invoice.invoiceId());
+    if (!processedInvoiceCreditStore.tryClaim(invoice.invoiceId())) {
+      LOGGER.info("Invoice credit already claimed: invoiceId={}", invoice.invoiceId());
       return;
     }
 
     var request = new TransferRequest(invoice.invoiceId(), invoice.netAmount());
 
-    transferIssuer.issue(request);
-    processedInvoiceCreditStore.markAsProcessed(invoice.invoiceId());
+    try {
+      transferIssuer.issue(request);
+    } catch (RuntimeException exception) {
+      processedInvoiceCreditStore.releaseClaim(invoice.invoiceId());
+      throw exception;
+    }
   }
 }

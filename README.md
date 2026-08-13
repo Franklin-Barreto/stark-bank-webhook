@@ -61,9 +61,11 @@ períodos em que o webhook esteve indisponível sem depender de um reinício.
 ### Idempotência
 
 O ID da Invoice é usado como `externalId` da Transfer e como chave primária da
-tabela `processed_invoice_credit`. O banco local impede o reprocessamento de
-webhooks repetidos, enquanto a Stark Bank protege a movimentação financeira
-contra Transfers repetidas com o mesmo `externalId`.
+tabela `processed_invoice_credit`. Antes de emitir a Transfer, a aplicação tenta
+reservar o processamento com um `INSERT ... ON CONFLICT DO NOTHING`. Essa
+operação atômica garante que somente uma execução concorrente prossiga. Se a
+emissão falhar, a reserva é removida para permitir uma nova tentativa. A Stark
+Bank fornece uma segunda proteção por meio do `externalId`.
 
 Na Sandbox, a segunda Transfer é inicialmente criada com outro ID e status
 `created`, mas posteriormente muda para `failed`; somente a primeira chega a
@@ -227,5 +229,6 @@ Credenciais, chaves e senhas não são armazenadas no repositório nem na imagem
 - O encerramento da campanha de 24 horas é operacional.
 - Falhas definitivas de Transfer exigiriam webhooks, persistência de status,
   alertas e conciliação próprios.
-- A criação remota da Transfer e o registro local não são atômicos; o
-  `externalId` mitiga duplicação financeira em retries.
+- A reserva local e a criação remota da Transfer não formam uma única transação.
+  Se o processo cair depois da reserva, ela pode exigir recuperação manual; o
+  `externalId` permanece como proteção contra duplicação financeira em retries.

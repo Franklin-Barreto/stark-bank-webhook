@@ -2,7 +2,7 @@ package br.com.f2e.starkbankwebhook.transfer.application;
 
 public interface ProcessedInvoiceCreditStore {
 
-  boolean wasProcessed(String invoiceId);
+  boolean tryClaim(String invoiceId);
 
-  void markAsProcessed(String invoiceId);
+  void releaseClaim(String invoiceId);
 }

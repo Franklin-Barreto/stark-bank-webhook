@@ -15,12 +15,12 @@ class JpaProcessedInvoiceCreditStore implements ProcessedInvoiceCreditStore {
   }
 
   @Override
-  public boolean wasProcessed(String invoiceId) {
-    return repository.existsById(invoiceId);
+  public boolean tryClaim(String invoiceId) {
+    return repository.insertIfAbsent(invoiceId, Instant.now()) == 1;
   }
 
   @Override
-  public void markAsProcessed(String invoiceId) {
-    repository.save(new ProcessedInvoiceCreditEntity(invoiceId, Instant.now()));
+  public void releaseClaim(String invoiceId) {
+    repository.deleteById(invoiceId);
   }
 }
