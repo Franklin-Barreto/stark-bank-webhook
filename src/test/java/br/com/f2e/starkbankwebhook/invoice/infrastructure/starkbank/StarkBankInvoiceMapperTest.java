@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 class StarkBankInvoiceMapperTest {
 
-  private StarkBankInvoiceMapper starkBankInvoiceMapper = new StarkBankInvoiceMapper();
+  private final StarkBankInvoiceMapper starkBankInvoiceMapper = new StarkBankInvoiceMapper();
 
   @Test
   void shouldMapInvoiceDraftToStarkBankInvoice() {
