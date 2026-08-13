@@ -35,3 +35,5 @@ starkbank:
     scheduling:
       enabled: ${STARKBANK_INVOICE_SCHEDULING_ENABLED:false}
       interval: ${STARKBANK_INVOICE_SCHEDULING_INTERVAL:3h}
+  event-reconciliation:
+    run-on-startup: ${STARKBANK_EVENT_RECONCILIATION_RUN_ON_STARTUP:false}

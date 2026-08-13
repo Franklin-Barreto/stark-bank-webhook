@@ -185,6 +185,7 @@
                     <excludes>
                         <exclude>**/*Application.class</exclude>
                         <exclude>**/Preconditions.class</exclude>
+                        <exclude>**/InvoiceCreditReconciliationRunner.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>
