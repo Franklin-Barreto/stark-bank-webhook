@@ -3,6 +3,7 @@ package br.com.f2e.starkbankwebhook.transfer.infrastructure.starkbank;
 import br.com.f2e.starkbankwebhook.shared.infrastructure.starkbank.ConditionalOnStarkBankEnabled;
 import br.com.f2e.starkbankwebhook.transfer.application.EventService;
 import br.com.f2e.starkbankwebhook.transfer.application.ProcessCreditedInvoice;
+import br.com.f2e.starkbankwebhook.transfer.application.ProcessedInvoiceCreditStore;
 import br.com.f2e.starkbankwebhook.transfer.application.ReconcileInvoiceCredits;
 import br.com.f2e.starkbankwebhook.transfer.application.TransferIssuer;
 import com.starkbank.Project;
@@ -29,8 +30,9 @@ class TransferConfiguration {
   }
 
   @Bean
-  ProcessCreditedInvoice processCreditedInvoice(TransferIssuer transferIssuer) {
-    return new ProcessCreditedInvoice(transferIssuer);
+  ProcessCreditedInvoice processCreditedInvoice(
+      TransferIssuer transferIssuer, ProcessedInvoiceCreditStore processedInvoiceCreditStore) {
+    return new ProcessCreditedInvoice(transferIssuer, processedInvoiceCreditStore);
   }
 
   @Bean
