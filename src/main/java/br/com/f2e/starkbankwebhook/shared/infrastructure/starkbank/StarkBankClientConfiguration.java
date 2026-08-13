@@ -12,10 +12,16 @@ import org.springframework.context.annotation.Configuration;
 class StarkBankClientConfiguration {
 
   @Bean
-  Project starkBankProject(StarkBankProperties properties) {
+  StarkBankPrivateKeyProvider starkBankPrivateKeyProvider(StarkBankProperties properties) {
+    return new StarkBankPrivateKeyProvider(properties);
+  }
+
+  @Bean
+  Project starkBankProject(
+      StarkBankProperties properties, StarkBankPrivateKeyProvider privateKeyProvider) {
     try {
       var project =
-          new Project(properties.environment(), properties.projectId(), properties.privateKey());
+          new Project(properties.environment(), properties.projectId(), privateKeyProvider.get());
 
       configureSdkUser(project);
       return project;

@@ -1,4 +1,47 @@
 services:
+  app:
+    build:
+      context: .
+    image: stark-bank-webhook:local
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-starkbank}
+      DB_USER: ${DB_USER:-starkbank}
+      DB_PASSWORD: ${DB_PASSWORD:-starkbank}
+
+      STARKBANK_ENABLED: ${STARKBANK_ENABLED:-false}
+      STARKBANK_ENVIRONMENT: ${STARKBANK_ENVIRONMENT:-sandbox}
+      STARKBANK_PROJECT_ID: ${STARKBANK_PROJECT_ID:-}
+      STARKBANK_PRIVATE_KEY_FILE: /run/secrets/starkbank_private_key
+
+      STARKBANK_INVOICE_RUN_ON_STARTUP: ${STARKBANK_INVOICE_RUN_ON_STARTUP:-false}
+      STARKBANK_INVOICE_SCHEDULING_ENABLED: ${STARKBANK_INVOICE_SCHEDULING_ENABLED:-false}
+      STARKBANK_INVOICE_SCHEDULING_INTERVAL: ${STARKBANK_INVOICE_SCHEDULING_INTERVAL:-3h}
+      STARKBANK_EVENT_RECONCILIATION_RUN_ON_STARTUP: ${STARKBANK_EVENT_RECONCILIATION_RUN_ON_STARTUP:-false}
+
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    restart: unless-stopped
+
+    secrets:
+      - starkbank_private_key
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail --silent http://localhost:8080/actuator/health | grep -q '\"status\":\"UP\"'"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
   postgres:
     image: postgres:17-alpine
     environment:
@@ -6,7 +49,7 @@ services:
       POSTGRES_USER: ${DB_USER:-starkbank}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-starkbank}
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-starkbank} -d ${DB_NAME:-starkbank}"]
       interval: 5s
@@ -17,3 +60,7 @@ services:
 
 volumes:
   postgres-data:
+
+secrets:
+  starkbank_private_key:
+    file: ${STARKBANK_PRIVATE_KEY_SOURCE:-./stark-bank-sandbox-private-key.pem}
