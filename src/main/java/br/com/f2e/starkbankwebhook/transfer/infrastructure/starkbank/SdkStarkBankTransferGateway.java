@@ -29,6 +29,14 @@ final class SdkStarkBankTransferGateway implements StarkBankTransferGateway {
           "Transfer batch issued successfully: requested={}, created={}",
           transfers.size(),
           createdTransfers.size());
+
+      createdTransfers.forEach(
+          transfer ->
+              LOGGER.info(
+                  "Transfer issued: transferId={}, externalId={}, status={}",
+                  transfer.id,
+                  transfer.externalId,
+                  transfer.status));
     } catch (Exception exception) {
       throw new TransferIssuanceException(
           "Failed to issue transfers through Stark Bank", exception);

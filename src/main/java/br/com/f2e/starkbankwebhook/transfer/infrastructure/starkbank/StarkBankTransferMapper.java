@@ -2,6 +2,7 @@ package br.com.f2e.starkbankwebhook.transfer.infrastructure.starkbank;
 
 import br.com.f2e.starkbankwebhook.transfer.domain.TransferRequest;
 import com.starkbank.Transfer;
+import java.util.List;
 import java.util.Map;
 
 public final class StarkBankTransferMapper {
@@ -21,8 +22,11 @@ public final class StarkBankTransferMapper {
   private static final String EXTERNAL_ID = "externalId";
   private static final String AMOUNT = "amount";
   private static final String TAGS = "tags";
+  private static final String RULES = "rules";
   private static final String CREDITED_INVOICE_TAG = "credited-invoice";
   private static final String INVOICE_TAG_PREFIX = "invoice/";
+  private static final String RESENDING_LIMIT = "resendingLimit";
+  private static final int RESENDING_LIMIT_VALUE = 5;
 
   public Transfer map(TransferRequest request) {
     var transfer =
@@ -44,7 +48,9 @@ public final class StarkBankTransferMapper {
             EXTERNAL_ID,
             request.externalId(),
             TAGS,
-            new String[] {CREDITED_INVOICE_TAG, INVOICE_TAG_PREFIX + request.externalId()});
+            new String[] {CREDITED_INVOICE_TAG, INVOICE_TAG_PREFIX + request.externalId()},
+            RULES,
+            List.of(new Transfer.Rule(RESENDING_LIMIT, RESENDING_LIMIT_VALUE)));
     try {
       return new Transfer(transfer);
 

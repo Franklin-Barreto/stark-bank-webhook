@@ -24,5 +24,12 @@ class StarkBankTransferMapperTest {
     assertThat(transfer.taxId).isEqualTo("20.018.183/0001-80");
     assertThat(transfer.accountType).isEqualTo("payment");
     assertThat(transfer.tags).containsExactly("credited-invoice", "invoice/invoice-id");
+    assertThat(transfer.rules)
+        .singleElement()
+        .satisfies(
+            rule -> {
+              assertThat(rule.key).isEqualTo("resendingLimit");
+              assertThat(rule.value).isEqualTo(5);
+            });
   }
 }
